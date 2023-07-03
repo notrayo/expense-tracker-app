@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../models/expense.dart';
+import '../data/dummy_data.dart';
 
 class AddExpense extends StatefulWidget {
   const AddExpense({super.key});
@@ -8,6 +10,8 @@ class AddExpense extends StatefulWidget {
 }
 
 class _AddExpenseState extends State<AddExpense> {
+  //referencing the dummy data
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
