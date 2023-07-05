@@ -101,6 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Text(
                               '${Expense.getFormattedMonthYear(expense.date)} (${expense.category})',
                               style: const TextStyle(
+                                fontSize: 14,
                                 fontStyle: FontStyle.italic,
                               ),
                             ),
