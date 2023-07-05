@@ -1,5 +1,6 @@
 //import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 const uuid = Uuid();
 
@@ -12,12 +13,13 @@ class Expense {
   final DateTime date;
   final String category;
 
-  Expense(
-      {required this.description,
-      required this.amount,
-      required this.date,
-      required this.category})
-      : id = uuid.v4();
+  Expense({
+    required this.description,
+    required this.amount,
+    required this.date,
+    required this.category,
+    //required String formattedDate}
+  }) : id = uuid.v4();
 
   Map<String, dynamic> toMap() {
     return {
@@ -26,5 +28,39 @@ class Expense {
       'date': date,
       'category': category,
     };
+  }
+
+  factory Expense.fromMap(Map<String, dynamic> map) {
+    final expenseDate = (map['date'] as Timestamp).toDate();
+    //final formattedDate = '${_getMonthName(expenseDate.month)} ${expenseDate.year}';
+    return Expense(
+      description: map['description'],
+      amount: map['amount'],
+      category: map['category'],
+      date: expenseDate,
+      //formattedDate: formattedDate
+    );
+  }
+
+  static String getFormattedMonthYear(DateTime date) {
+    final monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+
+    final month = monthNames[date.month - 1];
+    final year = date.year.toString();
+
+    return '$month $year';
   }
 }
