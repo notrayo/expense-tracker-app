@@ -1,10 +1,12 @@
-import 'dart:math';
+//import 'dart:math';
 
+import '../models/expense.dart';
 import 'package:flutter/material.dart';
 //import '../models/expense.dart';
 //import '../data/dummy_data.dart';
 import 'package:intl/intl.dart';
 import './home.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddExpense extends StatefulWidget {
   const AddExpense({super.key});
@@ -16,6 +18,13 @@ class AddExpense extends StatefulWidget {
 class _AddExpenseState extends State<AddExpense> {
   final _formKey = GlobalKey<FormState>();
   DateTime? _selectedDate;
+
+  //data controllers
+  final _descriptionController = TextEditingController();
+  final _amountController = TextEditingController();
+  final _dateController = TextEditingController();
+  //final _categoryController = TextEditingController();
+  String? _selectedCategory;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -29,7 +38,7 @@ class _AddExpenseState extends State<AddExpense> {
         _selectedDate = picked;
       });
       // Handle the selected date
-      print('Selected date: $picked');
+      ('Selected date: $picked');
     }
   }
 
@@ -40,7 +49,90 @@ class _AddExpenseState extends State<AddExpense> {
     'commute',
     'clothes'
   ];
-  String? _selectedCategory;
+
+  //adding the data to a firebase collection table
+
+  void _saveExpense() {
+    final String description = _descriptionController.text;
+    final double amount = double.tryParse(_amountController.text) ?? 0;
+    final DateTime? date = _selectedDate;
+    //final Category category = Category.values[_selectedCategoryIndex()];
+
+    if (_formKey.currentState?.validate() ?? false) {
+      final expense = Expense(
+        description: description,
+        amount: amount,
+        date: date!,
+        category: _selectedCategory!,
+      );
+
+      // Save the expense to Firebase collection
+      FirebaseFirestore.instance
+          .collection('newExpenses')
+          .add(expense.toMap())
+          .then((_) {
+        // Show snackbar notification
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Notification'),
+              content: const Text('New Expense Captured Successfully!'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    // Clear the form
+                    _descriptionController.clear();
+                    _amountController.clear();
+                    _dateController.clear();
+                    setState(() {
+                      _selectedDate = null;
+                      _selectedCategory = null;
+                    });
+
+                    // Navigate to the home screen
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => const HomeScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }).catchError((error) {
+        // Show dialog notification if there was an error
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Error'),
+                content: Text('Failed to capture expense: $error'),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
+
+        // Clear the form
+      }).catchError((error) {
+        // Show snackbar notification if there was an error
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to capture expense: $error'),
+          ),
+        );
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +158,7 @@ class _AddExpenseState extends State<AddExpense> {
                         height: 20,
                       ),
                       TextFormField(
+                        controller: _descriptionController,
                         decoration: InputDecoration(
                           hintText: '...enter info here ...',
                           prefixIcon: const Icon(Icons.info_outline),
@@ -90,6 +183,7 @@ class _AddExpenseState extends State<AddExpense> {
                         height: 20,
                       ),
                       TextFormField(
+                        controller: _amountController,
                         decoration: InputDecoration(
                           hintText: '... in Kshs',
                           prefixIcon: const Icon(Icons.attach_money),
@@ -118,6 +212,7 @@ class _AddExpenseState extends State<AddExpense> {
                         children: <Widget>[
                           Expanded(
                             child: TextFormField(
+                              controller: _dateController,
                               decoration: InputDecoration(
                                 hintText: _selectedDate != null
                                     ? DateFormat('dd-MM-yyyy')
@@ -187,11 +282,12 @@ class _AddExpenseState extends State<AddExpense> {
                           // width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
-                                ),
-                              );
+                              _saveExpense();
+                              // Navigator.of(context).pushReplacement(
+                              //   MaterialPageRoute(
+                              //     builder: (context) => const HomeScreen(),
+                              //   ),
+                              // );
                             },
                             style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(

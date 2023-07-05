@@ -20,7 +20,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Expemse Tracker App',
+        builder: (BuildContext context, Widget? child) {
+          return ScaffoldMessenger(child: child!);
+        },
+        title: 'Expense Tracker App',
         theme: ThemeData(
           primarySwatch: Colors.blueGrey,
         ),

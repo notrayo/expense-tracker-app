@@ -14,38 +14,40 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Expense> expenses = initialExpenses;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Expenses App ...'),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AddExpense(),
-                      ));
-                },
-                icon: const Icon(
-                  Icons.add,
-                  size: 30,
-                ))
-          ],
-        ),
-        body: ListView.builder(
-            itemCount: expenses.length,
-            itemBuilder: ((context, index) {
-              final expense = expenses[index];
-              return ListTile(
-                title: Text(
-                  expense.description,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                subtitle:
-                    Text('Amount: \$${expense.amount.toStringAsFixed(2)}'),
-                //trailing: Text(expense.date.toString()),
-              );
-            })));
+    return ScaffoldMessenger(
+      child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Recent Expenses ...'),
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AddExpense(),
+                        ));
+                  },
+                  icon: const Icon(
+                    Icons.add,
+                    size: 30,
+                  ))
+            ],
+          ),
+          body: ListView.builder(
+              itemCount: expenses.length,
+              itemBuilder: ((context, index) {
+                final expense = expenses[index];
+                return ListTile(
+                  title: Text(
+                    expense.description,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  subtitle:
+                      Text('Amount: \$${expense.amount.toStringAsFixed(2)}'),
+                  //trailing: Text(expense.date.toString()),
+                );
+              }))),
+    );
   }
 }

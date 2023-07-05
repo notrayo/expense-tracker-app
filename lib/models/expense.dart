@@ -10,7 +10,7 @@ class Expense {
   final String description;
   final double amount;
   final DateTime date;
-  final Category category;
+  final String category;
 
   Expense(
       {required this.description,
@@ -18,4 +18,13 @@ class Expense {
       required this.date,
       required this.category})
       : id = uuid.v4();
+
+  Map<String, dynamic> toMap() {
+    return {
+      'description': description,
+      'amount': amount,
+      'date': date,
+      'category': category,
+    };
+  }
 }
