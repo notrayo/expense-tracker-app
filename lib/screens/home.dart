@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/expense.dart';
 //import '../data/dummy_data.dart';
 import './drawer.dart';
-import './statistics.dart';
+import 'stats_tab.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
