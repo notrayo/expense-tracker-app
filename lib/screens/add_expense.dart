@@ -45,9 +45,9 @@ class _AddExpenseState extends State<AddExpense> {
   final List<String> categories = [
     'productivity',
     'leisure',
-    'food',
-    'commute',
-    'clothes'
+    'electronics',
+    'clothes',
+    'investment'
   ];
 
   //adding the data to a firebase collection table

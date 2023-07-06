@@ -1,7 +1,9 @@
 import './add_expense.dart';
 import 'package:flutter/material.dart';
 import '../models/expense.dart';
-import '../data/dummy_data.dart';
+//import '../data/dummy_data.dart';
+import './drawer.dart';
+import './statistics.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -14,6 +16,21 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Stream<QuerySnapshot<Map<String, dynamic>>>? expensesStream;
+
+  //select screen from drawer
+
+  void _selectScreenFromDrawer(String identifier) async {
+    Navigator.of(context).pop();
+
+    if (identifier == 'Statistics') {
+      final result =
+          await Navigator.of(context).push<Map<Filter, bool>>(MaterialPageRoute(
+        builder: (context) => const StatisticsScreen(),
+      ));
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   void initState() {
@@ -46,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ))
           ],
         ),
+        drawer: DrawerWidget(onSelectScreenFromDrawer: _selectScreenFromDrawer),
         body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
           stream: expensesStream,
           builder: (context, snapshot) {
