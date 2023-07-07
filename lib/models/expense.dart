@@ -63,4 +63,15 @@ class Expense {
 
     return '$month $year';
   }
+
+  factory Expense.fromSnapshot(DocumentSnapshot snapshot) {
+    final data = snapshot.data() as Map<String, dynamic>;
+    final expenseDate = (data['date'] as Timestamp).toDate();
+    return Expense(
+      description: data['description'],
+      amount: data['amount'],
+      category: data['category'],
+      date: expenseDate,
+    );
+  }
 }
