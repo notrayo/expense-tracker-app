@@ -134,6 +134,61 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
+                    onTap: () async {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Delete Expense'),
+                          content: const Text(
+                              'Are you sure you want to delete this Expense?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(ctx).pop();
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.of(ctx).pop();
+
+                                final expensesCollection = FirebaseFirestore
+                                    .instance
+                                    .collection('newExpenses');
+
+                                // Find the matching document based on expense properties
+                                final matchingDocuments =
+                                    await expensesCollection
+                                        .where('description',
+                                            isEqualTo: expense.description)
+                                        .where('amount',
+                                            isEqualTo: expense.amount)
+                                        .where('date', isEqualTo: expense.date)
+                                        .where('category',
+                                            isEqualTo: expense.category)
+                                        .get();
+
+                                // Delete all matching documents (there should be only one)
+                                for (final doc in matchingDocuments.docs) {
+                                  await expensesCollection.doc(doc.id).delete();
+                                }
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Expense deleted'),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                'Delete',
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 201, 31, 19)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 );
               },

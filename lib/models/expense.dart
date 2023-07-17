@@ -59,9 +59,10 @@ class Expense {
     ];
 
     final month = monthNames[date.month - 1];
+    final day = date.day.toString();
     final year = date.year.toString();
 
-    return '$month $year';
+    return '$month $day, $year';
   }
 
   factory Expense.fromSnapshot(DocumentSnapshot snapshot) {

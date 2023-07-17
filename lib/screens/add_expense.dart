@@ -47,7 +47,8 @@ class _AddExpenseState extends State<AddExpense> {
     'leisure',
     'electronics',
     'clothes',
-    'investment'
+    'investment',
+    'commute / fare'
   ];
 
   //adding the data to a firebase collection table
